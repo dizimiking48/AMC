@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>American Corner Management Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <style>
+        @media print {
+            body { background: white; }
+            .no-print { display: none !important; }
+            .print-container { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+
+    <!-- Admin Navigation -->
+    <nav class="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-6 py-5 shadow-xl border-b border-blue-600">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-700 p-3 rounded-lg shadow-lg">
+                    <i class="fa-solid fa-gauge-high text-lg"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight">AC MANAGEMENT</span>
+                    <p class="text-xs text-blue-300">Visitor Management System</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-8">
+                <div class="hidden lg:flex space-x-8 text-sm font-medium">
+                    <a href="adult-signin.html" class="text-gray-600 hover:text-red-600 transition pb-2">Adult Entry</a>
+                <a href="child-signin.html" class="text-gray-600 hover:text-red-600 transition pb-2">Kids Entry</a>
+                <a href="dashboard.html" class="text-red-600 hover:text-red-600 transition pb-2">Admin Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-10 px-4">
+        
+        <!-- Statistics Section -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-white p-7 rounded-2xl shadow-lg border-l-4 border-blue-600 hover:shadow-xl transition-shadow hover:scale-105 transform duration-300">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Current Capacity</p>
+                        <h3 id="totalCount" class="text-5xl font-black text-blue-600">0</h3>
+                    </div>
+                    <div class="bg-blue-100 p-4 rounded-xl">
+                        <i class="fa-solid fa-users text-blue-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-7 rounded-2xl shadow-lg border-l-4 border-indigo-500 hover:shadow-xl transition-shadow hover:scale-105 transform duration-300">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Active Adults</p>
+                        <h3 id="adultCount" class="text-5xl font-black text-indigo-600">0</h3>
+                    </div>
+                    <div class="bg-indigo-100 p-4 rounded-xl">
+                        <i class="fa-solid fa-user-tie text-indigo-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-7 rounded-2xl shadow-lg border-l-4 border-amber-500 hover:shadow-xl transition-shadow hover:scale-105 transform duration-300">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Active Children</p>
+                        <h3 id="childCount" class="text-5xl font-black text-amber-600">0</h3>
+                    </div>
+                    <div class="bg-amber-100 p-4 rounded-xl">
+                        <i class="fa-solid fa-child-reaching text-amber-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white p-7 rounded-2xl shadow-lg border-l-4 border-rose-500 hover:shadow-xl transition-shadow hover:scale-105 transform duration-300">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider mb-2">Latest Timestamp</p>
+                        <h3 id="latestTimestamp" class="text-5xl font-black text-rose-600">N/A</h3>
+                    </div>
+                    <div class="bg-rose-100 p-4 rounded-xl">
+                        <i class="fa-solid fa-clock text-rose-600 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Data Container -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden print-container">
+            <!-- Header with Actions -->
+            <div class="bg-gradient-to-r from-slate-700 to-slate-800 text-white px-8 py-6 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold">Visitor Records</h2>
+                    <p class="text-slate-300 text-sm mt-1">Real-time visitor management</p>
+                </div>
+                <div class="flex gap-3 no-print items-center">
+                    <button type="button" onclick="triggerImport()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 transition shadow-lg">
+                        <i class="fa-solid fa-file-import"></i> Import Excel
+                    </button>
+                    <input id="excelImportInput" type="file" accept=".xlsx,.xls" class="hidden" onchange="importFromExcel(event)">
+                    <button type="button" onclick="exportToExcel()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 transition shadow-lg">
+                        <i class="fa-solid fa-file-excel"></i> Export Excel
+                    </button>
+                    <button type="button" onclick="clearLoginHistory()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 transition shadow-lg">
+                        <i class="fa-solid fa-trash-alt"></i> Delete Login History
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Tab Switcher -->
+            <div class="flex border-b bg-gray-50 text-sm md:text-base">
+                <button onclick="switchTab('adults')" id="adultTabBtn" class="flex-1 py-5 text-center font-bold text-blue-600 border-b-3 border-blue-600 bg-blue-50 transition hover:bg-blue-100">
+                    <i class="fa-solid fa-user-tie mr-2"></i> Adults
+                </button>
+                <button onclick="switchTab('kids')" id="kidsTabBtn" class="flex-1 py-5 text-center font-bold text-gray-500 hover:bg-gray-100 transition">
+                    <i class="fa-solid fa-child-reaching mr-2"></i> Kids
+                </button>
+            </div>
+
+            <!-- Adult Table -->
+            <div id="adultSection" class="block overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gradient-to-r from-blue-50 to-blue-100 text-gray-700 text-xs uppercase font-bold">
+                        <tr>
+                            <th class="px-6 py-5 border-b-2 border-blue-300">Visitor Details</th>
+                            <th class="px-6 py-5 border-b-2 border-blue-300">ID Info</th>
+                            <th class="px-6 py-5 border-b-2 border-blue-300">Collateral</th>
+                            <th class="px-6 py-5 border-b-2 border-blue-300">Status</th>
+                            <th class="px-6 py-5 border-b-2 border-blue-300">Timestamp</th>
+                            <th class="px-6 py-5 border-b-2 border-blue-300">Interest</th>
+                            <th class="px-6 py-5 border-b-2 border-blue-300">Gadget</th>
+                            <th class="px-6 py-5 border-b-2 border-blue-300">Device Notes</th>
+                            <th class="px-6 py-5 border-b-2 border-blue-300 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adultList" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+
+            <!-- Kids Table -->
+            <div id="kidsSection" class="hidden overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-gradient-to-r from-amber-50 to-amber-100 text-gray-700 text-xs uppercase font-bold">
+                        <tr>
+                            <th class="px-6 py-5 border-b-2 border-amber-300">Child Name</th>
+                            <th class="px-6 py-5 border-b-2 border-amber-300">Grade</th>
+                            <th class="px-6 py-5 border-b-2 border-amber-300">Activity</th>
+                        <th class="px-6 py-5 border-b-2 border-amber-300">Gadget</th>
+                        <th class="px-6 py-5 border-b-2 border-amber-300">Status</th>
+                        <th class="px-6 py-5 border-b-2 border-amber-300">Timestamp</th>
+                        <th class="px-6 py-5 border-b-2 border-amber-300">Device Notes</th>
+                        <th class="px-6 py-5 border-b-2 border-amber-300 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kidsList" class="divide-y divide-gray-200"></tbody>
+                </table>
+            </div>
+            
+            <div id="emptyState" class="hidden p-24 text-center bg-gradient-to-b from-gray-50 to-white">
+                <i class="fa-solid fa-inbox text-6xl mb-4 text-gray-300"></i>
+                <p class="text-lg text-gray-400 font-medium">No visitor records found.</p>
+                <p class="text-sm text-gray-300 mt-2">Visitors will appear here once they sign in.</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal for Editing Device Condition Notes -->
+    <div id="notesModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 no-print">
+        <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-gray-800">Device Condition Notes</h3>
+                <button onclick="closeNotesModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div class="mb-4">
+                <p class="text-sm text-gray-600 mb-2"><strong id="modalVisitorName"></strong></p>
+                <label class="block text-sm font-bold text-gray-800 mb-3">Add/Edit Notes:</label>
+                <textarea id="notesTextarea" placeholder="e.g., Device returned in good condition, small scratch on screen, battery low, etc." class="w-full p-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 h-32 resize-none"></textarea>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="closeNotesModal()" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 rounded-lg transition">Cancel</button>
+                <button onclick="saveNotes()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentEditingVisitor = null;
+
+        function loadData() {
+            const visitors = JSON.parse(localStorage.getItem('ac_visitors')) || [];
+            const adultList = document.getElementById('adultList');
+            const kidsList = document.getElementById('kidsList');
+            
+            adultList.innerHTML = '';
+            kidsList.innerHTML = '';
+
+            let aActive = 0;
+            let kActive = 0;
+            let latestTimestamp = null;
+
+            visitors.forEach(v => {
+                const isActive = v.status === 'active';
+                if (v.type === 'adult') {
+                    if (isActive) aActive++;
+                    const notesDisplay = v.adminNotes ? `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">${v.adminNotes.substring(0, 30)}...</span>` : '<span class="text-gray-400 text-xs">No notes</span>';
+                    const statusLabel = isActive ? '<span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-semibold">Active</span>' : '<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-semibold">Signed Out</span>';
+                    const visitorTimestamp = v.timestamp ? new Date(v.timestamp) : new Date();
+                    if (!latestTimestamp || visitorTimestamp > latestTimestamp) latestTimestamp = visitorTimestamp;
+                    adultList.innerHTML += `
+                        <tr class="transition border-b border-gray-100 ${isActive ? 'hover:bg-blue-50' : 'bg-slate-50 text-slate-500'}">
+                            <td class="px-6 py-5">
+                                <div class="font-bold text-gray-900">${v.firstName} ${v.lastName}</div>
+                                <div class="text-xs text-gray-500 mt-1">${v.email}</div>
+                            </td>
+                            <td class="px-6 py-5 text-sm">
+                                <div class="text-gray-800 font-semibold">${v.idNo}</div>
+                                <div class="text-xs text-gray-600 mt-1"><strong>Type:</strong> ${v.idCardType || 'N/A'}</div>
+                            </td>
+                            <td class="px-6 py-5 text-sm">
+                                <div class="text-gray-800 font-semibold">🏷️ ${v.idCardType || 'N/A'}</div>
+                                <div class="text-xs text-gray-600 mt-1">Collateral left</div>
+                            </td>
+                            <td class="px-6 py-5">${statusLabel}</td>
+                            <td class="px-6 py-5 text-sm text-gray-600">${v.timestamp ? new Date(v.timestamp).toLocaleString() : 'N/A'}</td>
+                            <td class="px-6 py-5"><span class="px-3 py-1 bg-blue-200 text-blue-800 rounded-full text-xs font-bold">${v.interest || 'None'}</span></td>
+                            <td class="px-6 py-5 text-sm text-gray-700 font-medium">${v.needsGadget === 'yes' ? '💻 ' + (v.gadget || 'Requested') : '—'}</td>
+                            <td class="px-6 py-5 text-sm">${notesDisplay}</td>
+                            <td class="px-6 py-5 text-right flex gap-2 no-print">
+                                <button onclick="openNotesModal('${v.id}', '${v.firstName} ${v.lastName}', '${(v.adminNotes || '').replace(/'/g, "\\'")}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-1 px-2 rounded text-xs transition">
+                                    <i class="fa-solid fa-note-sticky mr-1"></i>Notes
+                                </button>
+                                ${isActive ? `<button onclick="signOut('${v.id}')" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-1 px-2 rounded text-xs transition"><i class="fa-solid fa-sign-out-alt mr-1"></i>Out</button>` : ''}
+                            </td>
+                        </tr>`;
+                } else {
+                    if (isActive) kActive++;
+                    const notesDisplay = v.adminNotes ? `<span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">${v.adminNotes.substring(0, 30)}...</span>` : '<span class="text-gray-400 text-xs">No notes</span>';
+                    const statusLabel = isActive ? '<span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-semibold">Active</span>' : '<span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-semibold">Signed Out</span>';
+                    const visitorTimestamp = v.timestamp ? new Date(v.timestamp) : new Date();
+                    if (!latestTimestamp || visitorTimestamp > latestTimestamp) latestTimestamp = visitorTimestamp;
+                    kidsList.innerHTML += `
+                        <tr class="transition border-b border-gray-100 ${isActive ? 'hover:bg-amber-50' : 'bg-slate-50 text-slate-500'}">
+                            <td class="px-6 py-5 font-bold text-gray-900">🌟 ${v.firstName} ${v.lastName}</td>
+                            <td class="px-6 py-5 text-sm font-semibold text-gray-800">${v.grade}</td>
+                            <td class="px-6 py-5"><span class="px-3 py-1 bg-amber-200 text-amber-800 rounded-full text-xs font-bold">${v.interest || 'None'}</span></td>
+                            <td class="px-6 py-5 text-sm text-gray-700 font-medium">${v.needsGadget === 'yes' ? '🎮 ' + (v.gadget || 'Tablet') : '—'}</td>
+                            <td class="px-6 py-5">${statusLabel}</td>
+                            <td class="px-6 py-5 text-sm text-gray-600">${v.timestamp ? new Date(v.timestamp).toLocaleString() : 'N/A'}</td>
+                            <td class="px-6 py-5 text-sm">${notesDisplay}</td>
+                            <td class="px-6 py-5 text-right flex gap-2 no-print">
+                                <button onclick="openNotesModal('${v.id}', '${v.firstName} ${v.lastName}', '${(v.adminNotes || '').replace(/'/g, "\\'")}')" class="bg-blue-100 hover:bg-blue-200 text-blue-700 font-bold py-1 px-2 rounded text-xs transition">
+                                    <i class="fa-solid fa-note-sticky mr-1"></i>Notes
+                                </button>
+                                ${isActive ? `<button onclick="signOut('${v.id}')" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-1 px-2 rounded text-xs transition"><i class="fa-solid fa-sign-out-alt mr-1"></i>Out</button>` : ''}
+                            </td>
+                        </tr>`;
+                }
+            });
+
+            document.getElementById('totalCount').innerText = aActive + kActive;
+            document.getElementById('adultCount').innerText = aActive;
+            document.getElementById('childCount').innerText = kActive;
+            document.getElementById('latestTimestamp').innerText = latestTimestamp ? latestTimestamp.toLocaleString() : 'N/A';
+            document.getElementById('emptyState').classList.toggle('hidden', visitors.length > 0);
+        }
+
+        function openNotesModal(visitorId, visitorName, currentNotes) {
+            currentEditingVisitor = visitorId;
+            document.getElementById('modalVisitorName').textContent = visitorName;
+            document.getElementById('notesTextarea').value = currentNotes;
+            document.getElementById('notesModal').classList.remove('hidden');
+        }
+
+        function triggerImport() {
+            document.getElementById('excelImportInput').click();
+        }
+
+        function importFromExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const sheet = workbook.Sheets[sheetName];
+                const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+                const visitors = JSON.parse(localStorage.getItem('ac_visitors')) || [];
+                rows.forEach(row => {
+                    const fullName = (row.Name || row['Full Name'] || '').trim();
+                    const [firstName, ...rest] = fullName.split(' ');
+                    const lastName = rest.join(' ') || '';
+                    const type = (row.Type || '').toLowerCase().includes('child') ? 'child' : 'adult';
+                    const status = (row.Status || row['Visitor Status'] || 'active').toLowerCase().includes('out') ? 'out' : 'active';
+                    const timestamp = row['Check-in Time'] ? new Date(row['Check-in Time']).toISOString() : new Date().toISOString();
+
+                    visitors.push({
+                        id: row.ID || row['Identifier'] || Date.now().toString() + Math.random().toString(36).slice(2),
+                        type,
+                        status,
+                        timestamp,
+                        firstName: firstName || (type === 'child' ? 'Child' : 'Adult'),
+                        lastName: lastName || '',
+                        email: row.Email || '',
+                        sex: row.Sex || row.Gender || '',
+                        occupation: row.Occupation || '',
+                        specialization: row.Specialization || row['Specialization / Program'] || '',
+                        idNo: row['ID/NRC'] || row['ID Number'] || '',
+                        idCardType: row['ID Card Type'] || '',
+                        interest: row.Interest || '',
+                        needsGadget: (row['Gadget Requested'] || row['Needs Gadget'] || '').toLowerCase().includes('yes') || (row.Gadget || '').toLowerCase() !== 'none' ? 'yes' : 'no',
+                        gadget: row.Gadget || row['Device'] || '',
+                        school: row.School || '',
+                        grade: row.Grade || '',
+                        address: row.Address || '',
+                        adminNotes: row['Device Condition Notes'] || row['Notes'] || ''
+                    });
+                });
+
+                localStorage.setItem('ac_visitors', JSON.stringify(visitors));
+                loadData();
+                alert('Excel import completed successfully.');
+                event.target.value = '';
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function closeNotesModal() {
+            document.getElementById('notesModal').classList.add('hidden');
+            currentEditingVisitor = null;
+        }
+
+        function saveNotes() {
+            const notes = document.getElementById('notesTextarea').value;
+            let visitors = JSON.parse(localStorage.getItem('ac_visitors')) || [];
+            visitors = visitors.map(v => v.id === currentEditingVisitor ? {...v, adminNotes: notes} : v);
+            localStorage.setItem('ac_visitors', JSON.stringify(visitors));
+            closeNotesModal();
+            loadData();
+        }
+
+        function signOut(id) {
+            let visitors = JSON.parse(localStorage.getItem('ac_visitors')) || [];
+            visitors = visitors.map(v => v.id === id ? {...v, status: 'out'} : v);
+            localStorage.setItem('ac_visitors', JSON.stringify(visitors));
+            loadData();
+        }
+
+        function clearLoginHistory() {
+            if (!confirm('Delete all saved visitor login history? This cannot be undone.')) return;
+            localStorage.removeItem('ac_visitors');
+            loadData();
+            alert('All login history has been removed.');
+        }
+
+        function switchTab(type) {
+            const adultSec = document.getElementById('adultSection');
+            const kidsSec = document.getElementById('kidsSection');
+            const adultBtn = document.getElementById('adultTabBtn');
+            const kidsBtn = document.getElementById('kidsTabBtn');
+
+            if(type === 'adults') {
+                adultSec.classList.replace('hidden', 'block');
+                kidsSec.classList.replace('block', 'hidden');
+                adultBtn.className = "flex-1 py-5 text-center font-bold text-blue-600 border-b-3 border-blue-600 bg-blue-50 transition hover:bg-blue-100";
+                kidsBtn.className = "flex-1 py-5 text-center font-bold text-gray-500 hover:bg-gray-100 transition";
+            } else {
+                kidsSec.classList.replace('hidden', 'block');
+                adultSec.classList.replace('block', 'hidden');
+                kidsBtn.className = "flex-1 py-5 text-center font-bold text-amber-600 border-b-3 border-amber-600 bg-amber-50 transition hover:bg-amber-100";
+                adultBtn.className = "flex-1 py-5 text-center font-bold text-gray-500 hover:bg-gray-100 transition";
+            }
+        }
+
+        function exportToExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert('Excel export failed: library did not load. Please check your network or use a supported browser.');
+                return;
+            }
+
+            try {
+                const visitors = JSON.parse(localStorage.getItem('ac_visitors')) || [];
+                if (visitors.length === 0) {
+                    alert('No visitor records to export.');
+                    return;
+                }
+
+                const data = visitors.map(v => ({
+                    'Name': `${v.firstName} ${v.lastName}`,
+                    'Type': v.type === 'adult' ? 'Adult' : 'Child',
+                    'Status': v.status === 'active' ? 'Active' : 'Signed Out',
+                    'Email': v.email || 'N/A',
+                    'Occupation': v.occupation || 'N/A',
+                    'Grade': v.grade || 'N/A',
+                    'School': v.school || 'N/A',
+                    'Address': v.address || 'N/A',
+                    'ID/NRC': v.idNo || 'N/A',
+                    'ID Card Type': v.idCardType || 'N/A',
+                    'Interest': v.interest || 'None',
+                    'Gadget': v.gadget || 'None',
+                    'Gadget Requested': v.needsGadget,
+                    'Device Condition Notes': v.adminNotes || '',
+                    'Check-in Time': new Date(v.timestamp).toLocaleString() || 'N/A'
+                }));
+
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Visitors');
+
+                const range = XLSX.utils.decode_range(ws['!ref']);
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    const address = XLSX.utils.encode_col(C) + '1';
+                    if (!ws[address]) continue;
+                    ws[address].s = { font: { bold: true, color: { rgb: 'FFFFFF' } }, fill: { fgColor: { rgb: '1e293b' } }, alignment: { horizontal: 'center' } };
+                }
+
+                ws['!cols'] = [
+                    { wch: 18 }, { wch: 10 }, { wch: 20 }, { wch: 18 },
+                    { wch: 15 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
+                    { wch: 15 }, { wch: 25 }, { wch: 15 }, { wch: 12 }, { wch: 25 }, { wch: 20 }
+                ];
+
+                XLSX.writeFile(wb, `AC_Visitors_${new Date().toISOString().split('T')[0]}.xlsx`);
+            } catch (error) {
+                console.error(error);
+                alert('Excel export failed. Open the console for details.');
+            }
+        }
+
+        // Initialize and listen for changes in other windows
+        window.addEventListener('storage', loadData);
+        window.onload = function() {
+            loadData();
+        };
+    </script>
+</body>
+</html>

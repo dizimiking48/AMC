@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>American Corner Entry</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .form-input {
+            transition: all 0.3s ease;
+            border: 1.5px solid #e5e7eb;
+        }
+        .form-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .checkbox-custom:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-12 px-4 font-sans">
+    <nav class="bg-white shadow-lg px-6 py-5 mb-8">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-br from-blue-600 to-blue-800 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-flag-usa text-lg"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-gray-800 text-lg tracking-tight">American Corner</span>
+                    <p class="text-xs text-gray-500">Professional Access Portal</p>
+                </div>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="adult-signin.html" class="text-blue-600 font-semibold border-b-2 border-blue-600 pb-2 hover:text-blue-700">Adult Entry</a>
+                <a href="child-signin.html" class="text-gray-600 hover:text-blue-600 transition pb-2">Kids Entry</a>
+                <a href="dashboard.html" class="text-gray-600 hover:text-blue-600 transition pb-2">Admin Dashboard</a>
+            </div>
+        </div>
+    </nav>
+    <div class="max-w-4xl mx-auto">
+        <div class="bg-white shadow-2xl rounded-3xl overflow-hidden border border-gray-200">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-10 text-white">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="bg-white bg-opacity-20 p-3 rounded-lg">
+                        <i class="fa-solid fa-user-check text-2xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-bold">Professional Access Log</h1>
+                        <p class="text-blue-100 mt-2">Please provide your professional details for our records</p>
+                    </div>
+                </div>
+            </div>
+
+            <form class="p-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Name Fields -->
+                <div class="form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-user text-blue-600"></i>First Name
+                    </label>
+                    <input type="text" name="firstName" required class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 placeholder-gray-400">
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-user text-blue-600"></i>Middle Name (Optional)
+                    </label>
+                    <input type="text" name="middleName" class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 placeholder-gray-400">
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-user text-blue-600"></i>Last Name
+                    </label>
+                    <input type="text" name="lastName" required class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 placeholder-gray-400">
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-envelope text-blue-600"></i>Email Address
+                    </label>
+                    <input type="email" name="email" required class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 placeholder-gray-400">
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-person text-blue-600"></i>Sex
+                    </label>
+                    <select name="sex" class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase text-blue-600"></i>Occupation
+                    </label>
+                    <select name="occupation" class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option>Student</option>
+                        <option>Lecturer</option>
+                        <option>Embassy Personnel</option>
+                        <option>Other Working Professional</option>
+                        <option>School Leaver</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-blue-600"></i>Specialization / Program
+                    </label>
+                    <input type="text" name="specialization" class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 placeholder-gray-400" placeholder="e.g. Computer Science">
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-id-card text-blue-600"></i>ID / NRC Number
+                    </label>
+                    <input type="text" name="idNo" required class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 placeholder-gray-400">
+                </div>
+
+                <!-- Gadget Need -->
+                <div class="md:col-span-2 form-group bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border-2 border-blue-200">
+                    <label class="block text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-laptop text-blue-600"></i>What gadget would you like to use?
+                    </label>
+                    <select name="gadget" class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option>Headphones</option>
+                        <option>Chromebook</option>
+                        <option>iPad</option>
+                        <option>Portable DVD Player</option>
+                        <option>None</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-passport text-blue-600"></i>Type of ID Card
+                    </label>
+                    <select name="idCardType" required class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="">Select ID Type left at the desk...</option>
+                        <option>NRC</option>
+                        <option>School ID</option>
+                        <option>None</option>
+                    </select>
+                </div>
+
+                <!-- Interests -->
+                <div class="md:col-span-2 form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-heart text-blue-600"></i>Areas of Interest
+                    </label>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer">
+                            <input type="checkbox" name="interest" value="Internet Area" class="checkbox-custom w-5 h-5 rounded cursor-pointer"> 
+                            <span class="text-gray-700 font-medium">Internet Area</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer">
+                            <input type="checkbox" name="interest" value="Reading Space" class="checkbox-custom w-5 h-5 rounded cursor-pointer"> 
+                            <span class="text-gray-700 font-medium">Reading Space</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer">
+                            <input type="checkbox" name="interest" value="Maker Space" class="checkbox-custom w-5 h-5 rounded cursor-pointer"> 
+                            <span class="text-gray-700 font-medium">Maker Space</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer">
+                            <input type="checkbox" name="interest" value="Programs/Events" class="checkbox-custom w-5 h-5 rounded cursor-pointer"> 
+                            <span class="text-gray-700 font-medium">Programs/Events</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition cursor-pointer">
+                            <input type="checkbox" name="interest" value="EducationUSA" class="checkbox-custom w-5 h-5 rounded cursor-pointer"> 
+                            <span class="text-gray-700 font-medium">EducationUSA</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Collateral/Device Condition Note (Optional) -->
+                <div class="md:col-span-2 form-group">
+                    <label class="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-note-sticky text-blue-600"></i>Notes (Optional - For Admin Use)
+                    </label>
+                    <textarea name="adminNotes" placeholder="Leave empty - admin will add notes about device condition if borrowed" class="form-input w-full p-3.5 border rounded-xl focus:ring-2 focus:ring-blue-500 placeholder-gray-400 h-20 resize-none" disabled></textarea>
+                </div>
+
+                <button type="submit" class="md:col-span-2 bg-gradient-to-r from-blue-600 to-blue-800 text-white font-bold py-4 px-8 rounded-xl hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check-circle"></i> Complete Sign-In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const interests = formData.getAll('interest');
+            
+            const visitor = {
+                id: Date.now().toString(),
+                type: 'adult',
+                status: 'active',
+                timestamp: new Date().toISOString(),
+                firstName: formData.get('firstName'),
+                middleName: formData.get('middleName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                sex: formData.get('sex'),
+                occupation: formData.get('occupation'),
+                specialization: formData.get('specialization'),
+                idNo: formData.get('idNo'),
+                idCardType: formData.get('idCardType'),
+                interest: interests.join(', ') || 'None',
+                needsGadget: formData.get('gadget') !== 'None' ? 'yes' : 'no',
+                gadget: formData.get('gadget'),
+                adminNotes: ''
+            };
+            
+            const visitors = JSON.parse(localStorage.getItem('ac_visitors')) || [];
+            visitors.push(visitor);
+            localStorage.setItem('ac_visitors', JSON.stringify(visitors));
+            
+            alert('Sign-in successful! Welcome to American Corner.');
+            window.location.href = 'dashboard.html';
+        });
+    </script>
+</body>
+</html>
